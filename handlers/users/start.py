@@ -10,12 +10,21 @@ from loader import dp, db, bot
 @dp.message_handler(CommandStart())
 async def bot_start(message: types.Message):
     name = message.from_user.full_name
+    username = message.from_user.username
     # add user to database
     try:
-        db.add_user(
-            id=message.from_user.id,
-            name=name
-        )
+        if username is None:
+            db.add_user(
+                user_id=message.from_user.id,
+                name=name,
+                username='None'
+            )
+        else:
+            db.add_user(
+                user_id=message.from_user.id,
+                name=name,
+                username=username
+            )
         await message.answer(f"{name}, Welcome!")
         # inform the administration
         count = db.count_users()[0]
