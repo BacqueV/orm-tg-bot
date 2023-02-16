@@ -76,6 +76,15 @@ class Database:
     def show_tables(self):
         return self.execute("SELECT name FROM sqlite_master WHERE type='table'", fetchall=True)
 
+    def create_custom_table(self, **kwargs):
+        sql = (
+            """
+            CREATE TABLE table_name=? (
+            column_name=? column_type=?
+            )
+            """)
+        return self.execute(sql, parameters=(kwargs,), commit=True)
+
 
 def logger(statement):
     print(f"""

@@ -10,3 +10,4 @@ class CreateTable(StatesGroup):
     column_name = State()
     column_type = State()
     continue_or_not = State()
+    create_table = State()
