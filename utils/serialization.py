@@ -1,12 +1,9 @@
-from loader import dp, db
-from aiogram.dispatcher import FSMContext
-from aiogram import types
-from states.orm_states import OrmPanel, CreateTable
+def converter(data: dict) -> str:
+    table_name = data['table_name']
+    fields = data['fields']
 
+    sql = f'CREATE TABLE {table_name} (db_id INTEGER PRIMARY KEY, '
+    for item in fields:
+        sql += f"{item['column_name']} {item['column_type']}, "
 
-async def converter(data: dict) -> str:
-    pass
-
-
-async def some_function(something: any):
-    pass
+    return sql[:-2].join(' )').strip()

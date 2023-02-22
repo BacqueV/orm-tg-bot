@@ -27,9 +27,9 @@ async def list_tables(message: types.Message):
     if len(tables) == 1:
         await message.answer(f'{text}{tables[0][0]}')
     else:
-        for table in tables[0]:
+        for table in tables:
             table_id = 1
-            text += f'{table_id}. {table}\n'
+            text += f'{table_id}. {table[0]}\n'
             table_id += 1
         await message.answer(text)
 
@@ -94,20 +94,17 @@ async def save_column_type(message: types.Message, state: FSMContext):
 
 
 # Climax processing
-@dp.message_handler(text=('Interrupt', 'Create'), state=CreateTable.continue_or_not)
+@dp.message_handler(text='Interrupt', state=CreateTable.continue_or_not)
 async def climax_actions(message: types.Message, state: FSMContext):
     # users next action
     will = message.text
 
     if will == 'Interrupt':
         await state.finish()
+        await OrmPanel.main.set()
         await message.answer('<b><i>Creating table interrupted</i></b>', reply_markup=admin_panel.markup_orm_options)
-    elif will == 'Create':
-        # ADD HERE SQL FUNCTION
-        await CreateTable.create_table.set()
-        await message.answer('<b><i>Table successfully created</i></b>', reply_markup=admin_panel.markup_orm_options)
-    else:
-        await message.answer('<b><i>Choose the correct option</i></b>')
+
+    # Create options is in another file /handlers/users/create_db.py
 
 
 # Parameter collection implementation

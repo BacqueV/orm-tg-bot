@@ -1,4 +1,5 @@
 import sqlite3
+from utils.serialization import converter
 
 
 class Database:
@@ -76,14 +77,10 @@ class Database:
     def show_tables(self):
         return self.execute("SELECT name FROM sqlite_master WHERE type='table'", fetchall=True)
 
-    def create_custom_table(self, **kwargs):
-        sql = (
-            """
-            CREATE TABLE table_name=? (
-            column_name=? column_type=?
-            )
-            """)
-        return self.execute(sql, parameters=(kwargs,), commit=True)
+    def create_custom_table(self, data: dict):
+        sql = converter(data)
+        print('\n\n\n', sql)
+        return self.execute(sql, commit=True)
 
 
 def logger(statement):
