@@ -79,7 +79,6 @@ class Database:
 
     def create_custom_table(self, data: dict):
         sql = converter(data)
-        print('\n\n\n', sql)
         return self.execute(sql, commit=True)
 
 
