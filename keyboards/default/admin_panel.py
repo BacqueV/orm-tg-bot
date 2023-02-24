@@ -15,5 +15,4 @@ markup_type_options = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2).add
 # ask for continuing process
 btn_interrupt = KeyboardButton('Interrupt')
 btn_create = KeyboardButton('Create')
-btn_continue = KeyboardButton('Continue')
-markup_ask_for_continue = ReplyKeyboardMarkup(resize_keyboard=True).row(btn_continue).add(btn_interrupt, btn_create)
+markup_next_action = ReplyKeyboardMarkup(resize_keyboard=True).add(btn_interrupt, btn_create)

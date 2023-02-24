@@ -13,34 +13,21 @@ async def show_admin_panel(message: types.Message):
     await message.answer(
         'Welcome to ORM panel using <i>sqlite3</i>\n\n'
         '/users - list all users in DB\n'
-        '/clean_db - cleans <i>Users</i> table',
+        '/clean_db - cleans <i>Users</i> table\n\n'
+        'You can select a table from the list by entering its id',
         reply_markup=admin_panel.markup_orm_options
     )
     await OrmPanel.main.set()
 
 
-@dp.message_handler(text='List tables', state=OrmPanel.main)
-async def list_tables(message: types.Message):
-    tables = db.show_tables()
-    text = '<b>All existing tables</b>\n\n'
-
-    if len(tables) == 1:
-        await message.answer(f'{text}{tables[0][0]}')
-    else:
-        for table in tables:
-            table_id = 1
-            text += f'{table_id}. {table[0]}\n'
-            table_id += 1
-        await message.answer(text)
-
-
 # --- Creating Table | Start ---
 @dp.message_handler(text='Create table', state=OrmPanel.main)
-async def creating_initial_config(message: types.Message):
+async def creating_initial_config(message: types.Message, state: FSMContext):
     await message.answer(
         'Set a name for the table',
         reply_markup=ReplyKeyboardRemove()
     )
+    await state.finish()
     await CreateTable.table_name.set()
 
 
@@ -68,7 +55,8 @@ async def save_column_name(message: types.Message, state: FSMContext):
         }
     )
     await CreateTable.column_type.set()
-    await message.answer(f'Choose type for column <i>{column_name}</i>', reply_markup=admin_panel.markup_type_options)
+    await message.answer(f'Choose type for column <i>{column_name}</i>',
+                         reply_markup=admin_panel.markup_type_options)
 
 
 # Saving columns type | Asking for next action
@@ -89,12 +77,14 @@ async def save_column_type(message: types.Message, state: FSMContext):
     del data['column_name']
     await state.set_data(data)
 
-    await CreateTable.continue_or_not.set()
-    await message.answer('What would you like to do?', reply_markup=admin_panel.markup_ask_for_continue)
+    await CreateTable.column_name.set()
+    await message.answer('Choose next action, or continue creating',
+                         reply_markup=admin_panel.markup_next_action)
 
 
 # Climax processing
-@dp.message_handler(text='Interrupt', state=CreateTable.continue_or_not)
+# Create options is in another file /handlers/users/create_db.py
+@dp.message_handler(text='Interrupt', state=CreateTable.column_name)
 async def climax_actions(message: types.Message, state: FSMContext):
     # users next action
     will = message.text
@@ -102,13 +92,5 @@ async def climax_actions(message: types.Message, state: FSMContext):
     if will == 'Interrupt':
         await state.finish()
         await OrmPanel.main.set()
-        await message.answer('<b><i>Creating table interrupted</i></b>', reply_markup=admin_panel.markup_orm_options)
-
-    # Create options is in another file /handlers/users/create_db.py
-
-
-# Parameter collection implementation
-@dp.message_handler(text='Continue', state=CreateTable.continue_or_not)
-async def continue_specifying(message: types.Message):
-    await CreateTable.column_name.set()
-    await message.answer('Set a name for the column', reply_markup=ReplyKeyboardRemove())
+        await message.answer('<b><i>Creating table interrupted</i></b>',
+                             reply_markup=admin_panel.markup_orm_options)

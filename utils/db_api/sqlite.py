@@ -81,6 +81,11 @@ class Database:
         sql = converter(data)
         return self.execute(sql, commit=True)
 
+    def show_table_details(self, table_name: str):
+        sql = f'PRAGMA table_info({table_name})'
+
+        return self.execute(sql, fetchall=True)
+
 
 def logger(statement):
     print(f"""
