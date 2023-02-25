@@ -13,8 +13,7 @@ async def show_admin_panel(message: types.Message):
     await message.answer(
         'Welcome to ORM panel using <i>sqlite3</i>\n\n'
         '/users - list all users in DB\n'
-        '/clean_db - cleans <i>Users</i> table\n\n'
-        'You can select a table from the list by entering its id',
+        '/clean_db - cleans <i>Users</i> table',
         reply_markup=admin_panel.markup_orm_options
     )
     await OrmPanel.main.set()

@@ -4,8 +4,8 @@ from aiogram.dispatcher.filters.builtin import CommandHelp
 from loader import dp
 
 
-@dp.message_handler(CommandHelp())
+@dp.message_handler(CommandHelp(), state='*')
 async def bot_help(message: types.Message):
-    text = "explain here how can your bot help"
+    text = "Just testing some orm like stuff in rg bot)"
     
     await message.answer(text)
